@@ -1,0 +1,63 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Mehdi\\Desktop\\EvalExprUpdated\\EvalExprUpdated.fsproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Mehdi\\Desktop\\EvalExprUpdated\\EvalExprUpdated.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Mehdi\\Desktop\\EvalExprUpdated\\EvalExprUpdated.fsproj",
+        "projectName": "EvalExprUpdated",
+        "projectPath": "C:\\Users\\Mehdi\\Desktop\\EvalExprUpdated\\EvalExprUpdated.fsproj",
+        "packagesPath": "C:\\Users\\Mehdi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Mehdi\\Desktop\\EvalExprUpdated\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Mehdi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "FParsec": {
+              "target": "Package",
+              "version": "[1.0.3, )"
+            },
+            "FSharp.Core": {
+              "target": "Package",
+              "version": "[4.6.2, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}

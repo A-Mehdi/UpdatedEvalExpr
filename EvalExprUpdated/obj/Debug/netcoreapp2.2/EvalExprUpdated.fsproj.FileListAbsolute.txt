@@ -1,0 +1,10 @@
+C:\Users\Mehdi\Desktop\EvalExprUpdated\bin\Debug\netcoreapp2.2\EvalExprUpdated.deps.json
+C:\Users\Mehdi\Desktop\EvalExprUpdated\bin\Debug\netcoreapp2.2\EvalExprUpdated.runtimeconfig.json
+C:\Users\Mehdi\Desktop\EvalExprUpdated\bin\Debug\netcoreapp2.2\EvalExprUpdated.runtimeconfig.dev.json
+C:\Users\Mehdi\Desktop\EvalExprUpdated\bin\Debug\netcoreapp2.2\EvalExprUpdated.dll
+C:\Users\Mehdi\Desktop\EvalExprUpdated\obj\Debug\netcoreapp2.2\EvalExprUpdated.fsprojAssemblyReference.cache
+C:\Users\Mehdi\Desktop\EvalExprUpdated\obj\Debug\netcoreapp2.2\EvalExprUpdated.AssemblyInfoInputs.cache
+C:\Users\Mehdi\Desktop\EvalExprUpdated\obj\Debug\netcoreapp2.2\EvalExprUpdated.AssemblyInfo.fs
+C:\Users\Mehdi\Desktop\EvalExprUpdated\bin\Debug\netcoreapp2.2\EvalExprUpdated.pdb
+C:\Users\Mehdi\Desktop\EvalExprUpdated\obj\Debug\netcoreapp2.2\EvalExprUpdated.dll
+C:\Users\Mehdi\Desktop\EvalExprUpdated\obj\Debug\netcoreapp2.2\EvalExprUpdated.pdb

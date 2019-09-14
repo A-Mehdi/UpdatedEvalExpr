@@ -9,7 +9,6 @@ let int128Min = -170141183460469231731687303715884105728I
 let int256Max = (abs int128Min) * (abs int128Min) * 2I - 1I
 let int256Min = -(int256Max) - 1I
 let uint256Max = (int256Max + 1I) * 2I - 1I
-printfn "%A" uint256Max
 let uint128Max = 340282366920938463463374607431768211455I
 let int32Max = 2147483647I
 let int32Min = -2147483648I
@@ -23,6 +22,133 @@ let int8Min = -128I
 let int8Max = 127I
 let int16Min = -32768I
 let int16Max = 32767I
+
+
+module HelperFunctions =
+
+  let table = function
+    | 0 -> "0"
+    | 1 -> "1"
+    | 2 -> "2"
+    | 3 -> "3"
+    | 4 -> "4"
+    | 5 -> "5"
+    | 6 -> "6"
+    | 7 -> "7"
+    | 8 -> "8"
+    | 9 -> "9"
+    | 10 -> "A"
+    | 11 -> "B"
+    | 12 -> "C"
+    | 13 -> "D"
+    | 14 -> "E"
+    | 15 -> "F"
+    | _ -> ""
+
+  let table2 = function
+    | '0' -> "0000"
+    | '1' -> "1000"
+    | '2' -> "0100"
+    | '3' -> "1100"
+    | '4' -> "0010"
+    | '5' -> "1010"
+    | '6' -> "0110"
+    | '7' -> "1110"
+    | '8' -> "0001"
+    | '9' -> "1001"
+    | 'A' -> "0101"
+    | 'B' -> "1101"
+    | 'C' -> "0011"
+    | 'D' -> "1011"
+    | 'E' -> "0111"
+    | 'F' -> "1111"
+    | _ -> ""
+
+  let table3 = function
+    | '0' -> "000"
+    | '1' -> "100"
+    | '2' -> "010"
+    | '3' -> "110"
+    | '4' -> "001"
+    | '5' -> "101"
+    | '6' -> "011"
+    | '7' -> "111"
+    | _ -> ""
+
+  let rec rev_str (str : string) index res =
+    if index = str.Length then res
+    else rev_str (str) (index + 1) (res + string str.[str.Length - 1 - index])
+
+  let rec turnHextoBinary (str : string) index res =
+    if index = str.Length then res
+    else turnHextoBinary str (index + 1) (res + table2 str.[index])
+
+  let rec turnOctaltoBinary (str : string) index res =
+    if index = str.Length then res
+    else turnOctaltoBinary str (index + 1) (res + table3 str.[index])
+
+  let rec removeZero (str : string) =
+    if str.[str.Length - 1] = '0' then removeZero str.[.. str.Length - 2]
+    else str
+
+  let rec turnBinaryto128Bigint (str : string) index res =
+    if index = str.Length then res
+    else
+      let sign = if (index = 127) then (-1I) else 1I
+      let cur = BigInteger.Parse (string str.[index])
+      let add = sign * (pown 2I (index)) * cur
+      turnBinaryto128Bigint str (index + 1) (add + res)
+
+  let rec turnBinaryto256Bigint (str : string) index res =
+    if index = str.Length then res
+    else
+      let sign = if (index = 255) then (-1I) else 1I
+      let cur = BigInteger.Parse (string str.[index])
+      let add = sign * (pown 2I (index)) * cur
+      turnBinaryto256Bigint str (index + 1) (add + res)
+
+  let stringToBigint (str : string) =
+    let final_str =
+      match str.[0 .. 1] with
+      | "0x" | "0X" ->
+        let a = rev_str str.[2 ..] 0 ""
+        let a = turnHextoBinary a 0 ""
+        a
+      | "0b" | "0B" ->
+        let a = rev_str str.[2 ..] 0 ""
+        a
+      | "0o" | "0O" ->
+        let a = rev_str str.[2 ..] 0 ""
+        let a = turnOctaltoBinary a 0 ""
+        let a = removeZero ("0o" + a)
+        let a = a.[2 ..]
+        let a = if (a = "") then "0" else a
+        a
+      | _ -> ""
+    let rep = "0b"
+    if final_str.Length <= 32 then
+      let num = (rep + (rev_str final_str 0 ""))
+      let value = int num
+      bigint value
+    elif final_str.Length <= 64 then
+      let value = int64 (rep + (rev_str final_str 0 ""))
+      bigint value
+    elif final_str.Length <= 128 then
+      let value = turnBinaryto128Bigint final_str 0 0I
+      value
+    elif final_str.Length <= 256 then
+      let value = turnBinaryto256Bigint final_str 0 0I
+      value
+    else
+      -1I
+
+  let calculateValue (str : string) =
+    let rep = if (str.Length >= 2) then (str.[0 .. 1]) else ""
+    if rep = "0x" || rep = "0X" || rep = "0o" || rep = "0O" ||
+      rep = "0b" || rep = "oB" then
+      stringToBigint (str)
+    else
+      BigInteger.Parse str
 
 type Numbers =
   | I8 of int8
@@ -82,15 +208,6 @@ module Size =
     | BF64 -> 8
     | SError -> 9
 
-  let getCycleInt = function
-    | B8 -> 2I * (abs int8Min)
-    | B16 -> 2I * (abs int16Min)
-    | B32 -> 2I * (abs int32Min)
-    | B64 -> 2I * (abs int64Min)
-    | B128 -> 2I * (abs int128Min)
-    | B256 -> 2I * (abs int256Min)
-    | _ -> -1I
-
 type DataType =
   | Signed of Size
   | Unsigned of Size
@@ -131,7 +248,7 @@ module DataType =
     | Signed a -> a
     | Unsigned a -> a
     | Float a -> a
-    | CError a -> a
+    | CError _ -> SError
 
   let wrapValue dataType value =
     match dataType with
@@ -181,25 +298,25 @@ module Operate =
 
   let fixValue rep value =
     match rep with
-    | Signed size ->
+    | Signed _ ->
       let r1, r2 = getIntegerRange rep
       if value >= r1 && value <= r2 then
         wrapValue rep value
       elif value > r2 then
-        let cycle = getCycleInt size
+        let cycle = abs r1 + r2 + 1I
         let remainder = value % cycle
         if remainder <= r2 then
           wrapValue rep remainder
         else
-          let value = r1 + (remainder % (r2 + 1I))
+          let value = remainder - cycle
           wrapValue rep value
       else
-        let cycle = getCycleInt size
+        let cycle = abs r1 + r2 + 1I
         let remainder = value % cycle
         if remainder >= r1 then
           wrapValue rep remainder
         else
-          let value = r2 + (remainder % r1 + 1I)
+          let value = remainder + cycle
           wrapValue rep value
     | Unsigned _ ->
       let r1, r2 = getIntegerRange rep
@@ -578,40 +695,52 @@ module Parser =
 
 open Parser
 open Numbers
+open System
 
 let final str =
   match run expr str with
+    | Success ((CError _, NError (a, b)), _, _) ->
+      let result = str + "\n"
+      let space = (String.replicate (int(b) - 2) " ") + "^"
+      let fin = result + space + "\n" + a
+      printfn "%s" fin
+      [|fin|]
     | Success (v, _, p) ->
-      match fst v with
-      | CError _ ->
-        match snd v with
-        | NError (a, b) ->
-          let result = str + "\n"
-          let space = (String.replicate (int(b) - 2) " ") + "^"
-          let fin = result + space + "\n" + a
-          printfn "%s" fin
-          [|fin|]
-        | _ -> [|getValue (snd v)|]
-      | _ ->
-        if p.Column <> int64 (str.Length + 1) then
-          let result = str + "\n"
-          let space = (String.replicate (int(p.Column) - 2) " ") + "^"
-          let fin =
-            result + space + "\n" + "Expecting: Digit, Suffix or Operator"
-          printfn "%s" fin
-          [|fin|]
-        else
-          printfn "%A" (snd v)
-          [|getValue (snd v)|]
+      if p.Column <> int64 (str.Length + 1) then
+        let result = str + "\n"
+        let space = (String.replicate (int(p.Column) - 2) " ") + "^"
+        let fin =
+          result + space + "\n" + "Expecting: Digit, Suffix or Operator"
+        [|fin|]
+      else
+        [|getValue (snd v)|]
     | Failure (v, _, _) ->
-      printfn "%A" v
       [|v|]
 
+
+let rec concatenate res arg flag =
+  match arg with
+  | [] -> (res, flag)
+  | hd :: tail ->
+    if hd = "" then
+
+      concatenate res tail flag
+    elif res = "" then
+      concatenate (res + hd) tail flag
+    else
+      let last_char = res.[res.Length - 1]
+      let first_char = hd.[0]
+      if Char.IsDigit last_char && Char.IsDigit first_char then
+        concatenate (res + " " + hd) tail (res.Length)
+      else
+        concatenate (res + hd) tail flag
 
 
 
 [<EntryPoint>]
 let main argv =
-    let b = final "(5+3)*2+((float)5+2.1) - 2"
+    let b = final "0x0235"
+    let a = concatenate "" ["5"; "+"; "5"; "5"] 0
+    printfn "%A" a
     printfn "%A" b
     0 // return an integer exit code
